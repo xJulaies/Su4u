@@ -1,0 +1,230 @@
+.layout {
+  display: flex;
+  min-height: 70vh;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+}
+
+.gameShell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.playArea {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.sidePanel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(9, minmax(0, 1fr));
+  overflow: hidden;
+  border: 3px solid var(--theme-primary);
+  border-radius: 0.75rem;
+  background: var(--theme-border);
+  box-shadow: 0 1.25rem 2.5rem
+    color-mix(in srgb, var(--theme-primary) 20%, transparent);
+}
+
+.cell {
+  display: flex;
+  width: clamp(2rem, 9vw, 3.75rem);
+  aspect-ratio: 1 / 1;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--theme-border);
+  background: var(--theme-base);
+  color: var(--theme-text);
+  font-size: clamp(1rem, 4vw, 1.5rem);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.cell:nth-child(3n):not(:nth-child(9n)) {
+  border-right-width: 3px;
+  border-right-color: var(--theme-primary);
+}
+
+.cell:nth-child(n + 19):nth-child(-n + 27),
+.cell:nth-child(n + 46):nth-child(-n + 54) {
+  border-bottom-width: 3px;
+  border-bottom-color: var(--theme-primary);
+}
+
+.selectedCell {
+  background: var(--theme-surface-muted);
+  box-shadow: inset 0 0 0 2px var(--theme-accent);
+}
+
+.errorCell {
+  background: color-mix(in srgb, var(--theme-error) 18%, var(--theme-base));
+  color: var(--theme-error);
+  box-shadow: inset 0 0 0 2px var(--theme-error);
+}
+
+.notes {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(3, minmax(0, 1fr));
+  color: var(--theme-text-muted);
+  font-size: clamp(0.45rem, 1.8vw, 0.75rem);
+  font-weight: 600;
+}
+
+.note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notesToggle {
+  border: 1px solid var(--theme-border);
+  border-radius: 999px;
+  background: var(--theme-surface);
+  color: var(--theme-text);
+  padding: 0.65rem 1rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  box-shadow: 0 0.75rem 1.5rem
+    color-mix(in srgb, var(--theme-primary) 14%, transparent);
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    color 150ms ease,
+    transform 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.notesToggle:hover {
+  transform: translateY(-1px);
+  border-color: var(--theme-primary);
+  box-shadow: 0 1rem 2rem
+    color-mix(in srgb, var(--theme-primary) 22%, transparent);
+}
+
+.notesToggleActive {
+  border-color: var(--theme-accent);
+  background: var(--theme-primary);
+  color: var(--theme-primary-content);
+}
+
+.numberPad {
+  display: grid;
+  grid-template-columns: repeat(9, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+.numberButton {
+  display: flex;
+  width: clamp(2.25rem, 9vw, 3.25rem);
+  aspect-ratio: 1 / 1;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--theme-border);
+  border-radius: 0.75rem;
+  background: var(--theme-surface);
+  color: var(--theme-text);
+  font-size: clamp(1rem, 4vw, 1.35rem);
+  font-weight: 800;
+  box-shadow: 0 0.75rem 1.5rem
+    color-mix(in srgb, var(--theme-primary) 12%, transparent);
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    color 150ms ease,
+    transform 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.numberButton:hover {
+  transform: translateY(-1px);
+  border-color: var(--theme-primary);
+  background: var(--theme-surface-muted);
+  box-shadow: 0 1rem 2rem
+    color-mix(in srgb, var(--theme-primary) 20%, transparent);
+}
+
+.numberButton:active {
+  transform: translateY(0);
+  background: var(--theme-primary);
+  color: var(--theme-primary-content);
+}
+
+.generateButton {
+  border: 1px solid color-mix(in srgb, var(--theme-accent) 70%, transparent);
+  border-radius: 0.75rem;
+  background:
+    radial-gradient(
+      circle at 20% 15%,
+      color-mix(in srgb, var(--theme-accent) 30%, transparent),
+      transparent 35%
+    ),
+    linear-gradient(135deg, var(--theme-primary), var(--theme-secondary));
+  color: var(--theme-primary-content);
+  padding: 0.85rem 1.1rem;
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  box-shadow: 0 1rem 2rem
+    color-mix(in srgb, var(--theme-primary) 25%, transparent);
+  transition:
+    filter 150ms ease,
+    transform 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.generateButton:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.04);
+  box-shadow: 0 1.25rem 2.5rem
+    color-mix(in srgb, var(--theme-primary) 32%, transparent);
+}
+
+.generateButton:active {
+  transform: translateY(0);
+  filter: brightness(0.98);
+}
+
+@media (min-width: 768px) {
+  .layout {
+    padding: 3rem 2rem;
+  }
+
+  .board {
+    border-width: 4px;
+  }
+}
+
+@media (max-width: 768px) {
+  .gameShell {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .numberPad {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
