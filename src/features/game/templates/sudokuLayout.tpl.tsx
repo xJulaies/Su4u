@@ -37,10 +37,18 @@ export function SudokuLayout() {
             </section>
           </section>
 
-          <aside className={styles.sidePanel}>
+          <aside className="flex flex-col gap-4">
             <GenerateSudokuBtn
-              onClick={handleGenerateBoard}
-              text="Generate board"
+              onClick={() => handleGenerateBoard("easy")}
+              text="Generate easy board"
+            />
+            <GenerateSudokuBtn
+              onClick={() => handleGenerateBoard("medium")}
+              text="Generate medium board"
+            />
+            <GenerateSudokuBtn
+              onClick={() => handleGenerateBoard("hard")}
+              text="Generate hard board"
             />
           </aside>
         </section>

@@ -2,6 +2,7 @@ import type {
   TSudokuBoard,
   TSudokuGrid,
   TSudokuValue,
+  TDifficulty,
 } from "../types/sudoku.types";
 
 const GRID_SIZE = 9;
@@ -130,7 +131,10 @@ function createShuffledCellPositions(): [number, number][] {
   return positions.sort(() => Math.random() - 0.5);
 }
 
-function removeCellsFromGrid(grid: TSudokuGrid, cellsToRemove: number): TSudokuGrid {
+function removeCellsFromGrid(
+  grid: TSudokuGrid,
+  cellsToRemove: number,
+): TSudokuGrid {
   const puzzle = cloneGrid(grid);
   const positions = createShuffledCellPositions();
   let removedCells = 0;
@@ -169,9 +173,22 @@ function convertGridToBoard(
   );
 }
 
-export function generateSudokuBoard(): TSudokuBoard {
+export function generateSudokuBoard(difficulty: TDifficulty): TSudokuBoard {
   const solvedGrid = generateSolvedGrid();
-  const puzzleGrid = removeCellsFromGrid(solvedGrid, 45);
+  let cellsToRemove = 45;
+
+  switch (difficulty) {
+    case "easy":
+      cellsToRemove = 35;
+      break;
+    case "medium":
+      cellsToRemove = 45;
+      break;
+    case "hard":
+      cellsToRemove = 55;
+      break;
+  }
+  const puzzleGrid = removeCellsFromGrid(solvedGrid, cellsToRemove);
 
   return convertGridToBoard(puzzleGrid, solvedGrid);
 }

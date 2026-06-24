@@ -8,6 +8,8 @@ export type TSudokuCell = {
   isError: boolean;
 };
 
+export type TDifficulty = "easy" | "medium" | "hard";
+
 export type TSudokuBoard = TSudokuCell[][];
 
 export type TSudokuGrid = (TSudokuValue | null)[][];

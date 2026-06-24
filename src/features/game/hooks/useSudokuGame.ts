@@ -1,16 +1,20 @@
 import { useState } from "react";
 import { generateSudokuBoard } from "../lib/sudokuGenerator";
-import type { TSudokuValue, TSudokuSelectedCell } from "../types/sudoku.types";
+import type {
+  TSudokuValue,
+  TSudokuSelectedCell,
+  TDifficulty,
+} from "../types/sudoku.types";
 
 export function useSudokuGame() {
-  const [board, setBoard] = useState(() => generateSudokuBoard());
+  const [board, setBoard] = useState(() => generateSudokuBoard("medium"));
   const [selectedCell, setSelectedCell] = useState<TSudokuSelectedCell | null>(
     null,
   );
   const [notesMode, setNotesMode] = useState(false);
 
-  function handleGenerateBoard() {
-    setBoard(generateSudokuBoard());
+  function handleGenerateBoard(difficulty: TDifficulty) {
+    setBoard(generateSudokuBoard(difficulty));
     setSelectedCell(null);
     setNotesMode(false);
   }
