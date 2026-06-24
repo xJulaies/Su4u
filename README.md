@@ -2,6 +2,15 @@
 
 Su4u is a Sudoku-themed React learning project. The app introduces Sudoku, explains the rules and history, and includes a playable Sudoku board with generated puzzles, notes, error feedback, theming, routing, and a first Clerk authentication flow.
 
+## Live Demo
+
+The app is deployed and working on GitHub Pages:
+
+**[Open Su4u](https://xjulaies.github.io/Su4u/)**
+
+> [!NOTE]
+> The redirect after signing in does not work correctly on GitHub Pages yet. After completing the login, manually return to the [Su4u main page](https://xjulaies.github.io/Su4u/).
+
 ## Tech Stack
 
 - React with TypeScript
@@ -42,7 +51,8 @@ Public routes:
 Protected route group:
 
 - `src/routes/_authenticated.tsx`
-- `src/routes/_authenticated/_dashboard/dashboard.tsx`
+- `src/routes/_authenticated/dashboard/route.tsx`
+- `src/routes/_authenticated/dashboard/index.tsx`
 
 The `_authenticated` route is a pathless layout route. It does not add a URL segment, but it wraps protected child routes. The dashboard still resolves to:
 
@@ -142,7 +152,7 @@ npm run preview
 
 ## Known Next Steps
 
-- Verify the sign-in redirect behavior for the splat route.
+- Fix the sign-in redirect on GitHub Pages. Until then, users must manually return to the main page after logging in.
 - Decide whether to keep only `/sign-in/$` or add a normal `/sign-in` entry route.
 - Improve the dashboard beyond the current placeholder.
 - Add a dashboard link that only appears for signed-in users.
