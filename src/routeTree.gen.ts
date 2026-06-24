@@ -16,9 +16,10 @@ import { Route as ImpressumImpressumRouteImport } from './routes/_impressum/impr
 import { Route as HistoryHistoryRouteImport } from './routes/_history/history'
 import { Route as GameGameRouteImport } from './routes/_game/game'
 import { Route as AboutAboutRouteImport } from './routes/_about/about'
+import { Route as AuthenticatedDashboardRouteRouteImport } from './routes/_authenticated/dashboard/route'
+import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard/index'
 import { Route as SignUpSignUpSplatRouteImport } from './routes/_sign-up/sign-up.$'
 import { Route as SignInSignInSplatRouteImport } from './routes/_sign-in/sign-in.$'
-import { Route as AuthenticatedDashboardDashboardRouteImport } from './routes/_authenticated/_dashboard/dashboard'
 
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
@@ -54,6 +55,18 @@ const AboutAboutRoute = AboutAboutRouteImport.update({
   path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedDashboardRouteRoute =
+  AuthenticatedDashboardRouteRouteImport.update({
+    id: '/dashboard',
+    path: '/dashboard',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedDashboardIndexRoute =
+  AuthenticatedDashboardIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedDashboardRouteRoute,
+  } as any)
 const SignUpSignUpSplatRoute = SignUpSignUpSplatRouteImport.update({
   id: '/_sign-up/sign-up/$',
   path: '/sign-up/$',
@@ -64,23 +77,18 @@ const SignInSignInSplatRoute = SignInSignInSplatRouteImport.update({
   path: '/sign-in/$',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedDashboardDashboardRoute =
-  AuthenticatedDashboardDashboardRouteImport.update({
-    id: '/_dashboard/dashboard',
-    path: '/dashboard',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/dashboard': typeof AuthenticatedDashboardRouteRouteWithChildren
   '/about': typeof AboutAboutRoute
   '/game': typeof GameGameRoute
   '/history': typeof HistoryHistoryRoute
   '/impressum': typeof ImpressumImpressumRoute
   '/rules': typeof RulesRulesRoute
-  '/dashboard': typeof AuthenticatedDashboardDashboardRoute
   '/sign-in/$': typeof SignInSignInSplatRoute
   '/sign-up/$': typeof SignUpSignUpSplatRoute
+  '/dashboard/': typeof AuthenticatedDashboardIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -89,35 +97,37 @@ export interface FileRoutesByTo {
   '/history': typeof HistoryHistoryRoute
   '/impressum': typeof ImpressumImpressumRoute
   '/rules': typeof RulesRulesRoute
-  '/dashboard': typeof AuthenticatedDashboardDashboardRoute
   '/sign-in/$': typeof SignInSignInSplatRoute
   '/sign-up/$': typeof SignUpSignUpSplatRoute
+  '/dashboard': typeof AuthenticatedDashboardIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/_authenticated/dashboard': typeof AuthenticatedDashboardRouteRouteWithChildren
   '/_about/about': typeof AboutAboutRoute
   '/_game/game': typeof GameGameRoute
   '/_history/history': typeof HistoryHistoryRoute
   '/_impressum/impressum': typeof ImpressumImpressumRoute
   '/_rules/rules': typeof RulesRulesRoute
-  '/_authenticated/_dashboard/dashboard': typeof AuthenticatedDashboardDashboardRoute
   '/_sign-in/sign-in/$': typeof SignInSignInSplatRoute
   '/_sign-up/sign-up/$': typeof SignUpSignUpSplatRoute
+  '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/dashboard'
     | '/about'
     | '/game'
     | '/history'
     | '/impressum'
     | '/rules'
-    | '/dashboard'
     | '/sign-in/$'
     | '/sign-up/$'
+    | '/dashboard/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -126,21 +136,22 @@ export interface FileRouteTypes {
     | '/history'
     | '/impressum'
     | '/rules'
-    | '/dashboard'
     | '/sign-in/$'
     | '/sign-up/$'
+    | '/dashboard'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/_authenticated/dashboard'
     | '/_about/about'
     | '/_game/game'
     | '/_history/history'
     | '/_impressum/impressum'
     | '/_rules/rules'
-    | '/_authenticated/_dashboard/dashboard'
     | '/_sign-in/sign-in/$'
     | '/_sign-up/sign-up/$'
+    | '/_authenticated/dashboard/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -206,6 +217,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutAboutRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/dashboard': {
+      id: '/_authenticated/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthenticatedDashboardRouteRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/dashboard/': {
+      id: '/_authenticated/dashboard/'
+      path: '/'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof AuthenticatedDashboardIndexRouteImport
+      parentRoute: typeof AuthenticatedDashboardRouteRoute
+    }
     '/_sign-up/sign-up/$': {
       id: '/_sign-up/sign-up/$'
       path: '/sign-up/$'
@@ -220,22 +245,30 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignInSignInSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/_dashboard/dashboard': {
-      id: '/_authenticated/_dashboard/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof AuthenticatedDashboardDashboardRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
   }
 }
 
+interface AuthenticatedDashboardRouteRouteChildren {
+  AuthenticatedDashboardIndexRoute: typeof AuthenticatedDashboardIndexRoute
+}
+
+const AuthenticatedDashboardRouteRouteChildren: AuthenticatedDashboardRouteRouteChildren =
+  {
+    AuthenticatedDashboardIndexRoute: AuthenticatedDashboardIndexRoute,
+  }
+
+const AuthenticatedDashboardRouteRouteWithChildren =
+  AuthenticatedDashboardRouteRoute._addFileChildren(
+    AuthenticatedDashboardRouteRouteChildren,
+  )
+
 interface AuthenticatedRouteChildren {
-  AuthenticatedDashboardDashboardRoute: typeof AuthenticatedDashboardDashboardRoute
+  AuthenticatedDashboardRouteRoute: typeof AuthenticatedDashboardRouteRouteWithChildren
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
-  AuthenticatedDashboardDashboardRoute: AuthenticatedDashboardDashboardRoute,
+  AuthenticatedDashboardRouteRoute:
+    AuthenticatedDashboardRouteRouteWithChildren,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
