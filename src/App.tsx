@@ -12,6 +12,7 @@ export type RouterContext = {
 
 const router = createRouter({
   routeTree,
+  basepath: "/Su4u",
   context: {
     auth: undefined!,
   },
