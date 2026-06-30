@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { generateSudokuBoard } from "../lib/sudokuGenerator";
 import type {
   TSudokuValue,
@@ -12,11 +12,27 @@ export function useSudokuGame() {
     null,
   );
   const [notesMode, setNotesMode] = useState(false);
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const [isCompleted, setIsCompleted] = useState(false);
+
+  useEffect(() => {
+    if (isCompleted) return;
+
+    const timerId = window.setInterval(() => {
+      setElapsedSeconds((currentSeconds) => currentSeconds + 1);
+    }, 1000);
+
+    return () => {
+      window.clearInterval(timerId);
+    };
+  }, [isCompleted]);
 
   function handleGenerateBoard(difficulty: TDifficulty) {
     setBoard(generateSudokuBoard(difficulty));
     setSelectedCell(null);
     setNotesMode(false);
+    setElapsedSeconds(0);
+    setIsCompleted(false);
   }
 
   function handleCellClick(row: number, col: number) {
@@ -95,5 +111,6 @@ export function useSudokuGame() {
     handleCellClick,
     handleNotesToggle,
     handleNumber,
+    elapsedSeconds,
   };
 }

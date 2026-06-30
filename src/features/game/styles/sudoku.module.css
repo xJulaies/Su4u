@@ -28,6 +28,31 @@
   gap: 1rem;
 }
 
+.stats {
+  display: flex;
+  width: 100%;
+  max-width: calc(clamp(2rem, 9vw, 3.75rem) * 9);
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.statItem {
+  display: flex;
+  min-width: 7rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--theme-border);
+  border-radius: 0.75rem;
+  background: var(--theme-surface);
+  color: var(--theme-text);
+  padding: 0.65rem 1rem;
+  font-size: 0.95rem;
+  font-weight: 800;
+  box-shadow: 0 0.75rem 1.5rem
+    color-mix(in srgb, var(--theme-primary) 12%, transparent);
+}
+
 .sidePanel {
   display: flex;
   align-items: center;

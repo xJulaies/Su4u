@@ -5,6 +5,7 @@ import { SudokuNotesToggle } from "../atoms/sudokuNotesToggle.atm";
 import { SudokuNumberPad } from "../molecules/sudokuNumberPad.mol";
 import { GenerateSudokuBtn } from "../atoms/sudokuGenerateBtn.atm";
 import { useSudokuGame } from "../hooks/useSudokuGame";
+import { SudokuStats } from "../molecules/sudokuStats.mol";
 
 export function SudokuLayout() {
   const {
@@ -15,6 +16,7 @@ export function SudokuLayout() {
     handleCellClick,
     handleNotesToggle,
     handleNumber,
+    elapsedSeconds,
   } = useSudokuGame();
 
   return (
@@ -22,6 +24,7 @@ export function SudokuLayout() {
       <main className={styles.layout}>
         <section className={styles.gameShell}>
           <section className={styles.playArea}>
+            <SudokuStats elapsedSeconds={elapsedSeconds} />
             <SudokuBoard
               board={board}
               selectedCell={selectedCell}

@@ -56,3 +56,11 @@ export type TSudokuNumberBtnProps = {
 export type TSudokuNumberPadProps = {
   onNumberClick: (value: TSudokuValue) => void;
 };
+
+export type TSudokuTimerProps = {
+  elapsedSeconds: number;
+};
+
+export type TSudokuStatsProps = {
+  elapsedSeconds: number;
+};
