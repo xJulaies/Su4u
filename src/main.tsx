@@ -20,6 +20,7 @@ createRoot(document.getElementById("root")!).render(
       signUpFallbackRedirectUrl="/Su4u/dashboard"
       signInForceRedirectUrl="/Su4u/dashboard"
       signUpForceRedirectUrl="/Su4u/dashboard"
+      afterSignOutUrl="/Su4u"
     >
       <App />
     </ClerkProvider>
