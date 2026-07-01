@@ -4,7 +4,7 @@ import react from "@vitejs/plugin-react";
 import { tanstackRouter } from "@tanstack/router-plugin/vite";
 
 export default defineConfig({
-  base: "/Su4u/",
+  base: "/Su4u",
   plugins: [
     tanstackRouter({
       target: "react",
