@@ -64,3 +64,9 @@ export type TSudokuTimerProps = {
 export type TSudokuStatsProps = {
   elapsedSeconds: number;
 };
+
+export type TSudokuWinDialogProps = {
+  isOpen: boolean;
+  elapsedSeconds: number;
+  onPlayAgain: () => void;
+};

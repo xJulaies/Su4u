@@ -4,6 +4,7 @@ import type {
   TSudokuValue,
   TSudokuSelectedCell,
   TDifficulty,
+  TSudokuBoard,
 } from "../types/sudoku.types";
 
 export function useSudokuGame() {
@@ -14,6 +15,8 @@ export function useSudokuGame() {
   const [notesMode, setNotesMode] = useState(false);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [isCompleted, setIsCompleted] = useState(false);
+  const [currentDifficulty, setCurrentDifficulty] =
+    useState<TDifficulty>("medium");
 
   useEffect(() => {
     if (isCompleted) return;
@@ -27,12 +30,25 @@ export function useSudokuGame() {
     };
   }, [isCompleted]);
 
+  function isSudokuSolved(boardToCheck: TSudokuBoard) {
+    return boardToCheck.every((row) =>
+      row.every(
+        (cell) => cell.value !== null && cell.value === cell.solutionValue,
+      ),
+    );
+  }
+
   function handleGenerateBoard(difficulty: TDifficulty) {
     setBoard(generateSudokuBoard(difficulty));
     setSelectedCell(null);
     setNotesMode(false);
     setElapsedSeconds(0);
     setIsCompleted(false);
+    setCurrentDifficulty(difficulty);
+  }
+
+  function handleRestartBoard() {
+    handleGenerateBoard(currentDifficulty);
   }
 
   function handleCellClick(row: number, col: number) {
@@ -61,8 +77,8 @@ export function useSudokuGame() {
     const selectedBoardCell = board[selectedCell.row][selectedCell.col];
     const isCorrectValue = value === selectedBoardCell.solutionValue;
 
-    setBoard((currentBoard) =>
-      currentBoard.map((row, rowIndex) =>
+    setBoard((currentBoard) => {
+      const nextBoard = currentBoard.map((row, rowIndex) =>
         row.map((cell, colIndex) => {
           const isSelectedCell =
             selectedCell.row === rowIndex && selectedCell.col === colIndex;
@@ -96,8 +112,12 @@ export function useSudokuGame() {
             isError: !isCorrectValue,
           };
         }),
-      ),
-    );
+      );
+      if (isCorrectValue && isSudokuSolved(nextBoard)) {
+        setIsCompleted(true);
+      }
+      return nextBoard;
+    });
 
     if (isCorrectValue) {
       setSelectedCell(null);
@@ -112,5 +132,8 @@ export function useSudokuGame() {
     handleNotesToggle,
     handleNumber,
     elapsedSeconds,
+    isCompleted,
+    currentDifficulty,
+    handleRestartBoard,
   };
 }

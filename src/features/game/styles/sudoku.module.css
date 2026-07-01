@@ -231,6 +231,78 @@
   filter: brightness(0.98);
 }
 
+.dialogOverlay {
+  position: fixed;
+  z-index: 50;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--theme-base) 58%, transparent);
+  backdrop-filter: blur(0.45rem);
+  padding: 1rem;
+}
+
+.winDialog {
+  display: flex;
+  width: min(100%, 24rem);
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  border: 1px solid var(--theme-border);
+  border-radius: 0.75rem;
+  background: var(--theme-surface);
+  color: var(--theme-text);
+  padding: 2rem;
+  text-align: center;
+  box-shadow: 0 1.5rem 3.5rem
+    color-mix(in srgb, var(--theme-primary) 28%, transparent);
+}
+
+.winDialogTitle {
+  margin: 0;
+  color: var(--theme-primary);
+  font-size: 2rem;
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+.winDialogText {
+  margin: 0;
+  color: var(--theme-text-muted);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.winDialogButton {
+  border: 1px solid color-mix(in srgb, var(--theme-accent) 70%, transparent);
+  border-radius: 0.75rem;
+  background: linear-gradient(135deg, var(--theme-primary), var(--theme-secondary));
+  color: var(--theme-primary-content);
+  padding: 0.85rem 1.25rem;
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  box-shadow: 0 1rem 2rem
+    color-mix(in srgb, var(--theme-primary) 24%, transparent);
+  transition:
+    filter 150ms ease,
+    transform 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.winDialogButton:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.04);
+  box-shadow: 0 1.25rem 2.5rem
+    color-mix(in srgb, var(--theme-primary) 30%, transparent);
+}
+
+.winDialogButton:active {
+  transform: translateY(0);
+  filter: brightness(0.98);
+}
+
 @media (min-width: 768px) {
   .layout {
     padding: 3rem 2rem;
