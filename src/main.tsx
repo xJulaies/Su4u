@@ -14,8 +14,12 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ClerkProvider
       publishableKey={PUBLISHABLE_KEY}
+      signInUrl="/Su4u/sign-in"
+      signUpUrl="/Su4u/sign-up"
       signInFallbackRedirectUrl="/Su4u/dashboard"
       signUpFallbackRedirectUrl="/Su4u/dashboard"
+      signInForceRedirectUrl="/Su4u/dashboard"
+      signUpForceRedirectUrl="/Su4u/dashboard"
     >
       <App />
     </ClerkProvider>
