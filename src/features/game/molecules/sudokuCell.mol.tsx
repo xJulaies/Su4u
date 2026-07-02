@@ -10,6 +10,7 @@ export function SudokuCell({
 }: TSudokuCellProps) {
   const cellClassName = [
     styles.cell,
+    !cell.isGiven ? styles.editableCell : "",
     isSelected ? styles.selectedCell : "",
     cell.isError ? styles.errorCell : "",
   ]

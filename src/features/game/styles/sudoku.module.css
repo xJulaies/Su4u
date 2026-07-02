@@ -84,6 +84,10 @@
   line-height: 1;
 }
 
+.editableCell {
+  cursor: pointer;
+}
+
 .cell:nth-child(3n):not(:nth-child(9n)) {
   border-right-width: 3px;
   border-right-color: var(--theme-primary);
@@ -124,6 +128,7 @@
 }
 
 .notesToggle {
+  cursor: pointer;
   border: 1px solid var(--theme-border);
   border-radius: 999px;
   background: var(--theme-surface);
@@ -156,12 +161,14 @@
 
 .numberPad {
   display: grid;
+
   grid-template-columns: repeat(9, minmax(0, 1fr));
   gap: 0.5rem;
 }
 
 .numberButton {
   display: flex;
+  cursor: pointer;
   width: clamp(2.25rem, 9vw, 3.25rem);
   aspect-ratio: 1 / 1;
   align-items: center;
@@ -197,6 +204,7 @@
 }
 
 .generateButton {
+  cursor: pointer;
   border: 1px solid color-mix(in srgb, var(--theme-accent) 70%, transparent);
   border-radius: 0.75rem;
   background:
@@ -277,7 +285,11 @@
 .winDialogButton {
   border: 1px solid color-mix(in srgb, var(--theme-accent) 70%, transparent);
   border-radius: 0.75rem;
-  background: linear-gradient(135deg, var(--theme-primary), var(--theme-secondary));
+  background: linear-gradient(
+    135deg,
+    var(--theme-primary),
+    var(--theme-secondary)
+  );
   color: var(--theme-primary-content);
   padding: 0.85rem 1.25rem;
   font-size: 0.95rem;
