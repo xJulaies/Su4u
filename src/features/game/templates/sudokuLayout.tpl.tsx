@@ -24,7 +24,7 @@ export function SudokuLayout() {
 
   return (
     <PublicLayout>
-      <main className={styles.layout}>
+      <section className={styles.layout}>
         <section className={styles.gameShell}>
           <SudokuWinDialog
             isOpen={isCompleted}
@@ -63,7 +63,7 @@ export function SudokuLayout() {
             />
           </aside>
         </section>
-      </main>
+      </section>
     </PublicLayout>
   );
 }

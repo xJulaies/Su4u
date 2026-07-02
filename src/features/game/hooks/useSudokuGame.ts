@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect, useReducer } from "react";
 import { generateSudokuBoard } from "../lib/sudokuGenerator";
 import type {
   TSudokuValue,
@@ -7,96 +7,119 @@ import type {
   TSudokuBoard,
 } from "../types/sudoku.types";
 
-export function useSudokuGame() {
-  const [board, setBoard] = useState(() => generateSudokuBoard("medium"));
-  const [selectedCell, setSelectedCell] = useState<TSudokuSelectedCell | null>(
-    null,
+type TSudokuGameState = {
+  board: TSudokuBoard;
+  selectedCell: TSudokuSelectedCell;
+  notesMode: boolean;
+  elapsedSeconds: number;
+  isCompleted: boolean;
+  currentDifficulty: TDifficulty;
+};
+
+type TSudokuGameAction =
+  | { type: "generateBoard"; difficulty: TDifficulty }
+  | { type: "toggleNotesMode" }
+  | { type: "tickTimer" }
+  | { type: "cellClicked"; row: number; col: number }
+  | { type: "numberEntered"; value: TSudokuValue };
+
+const initialState: TSudokuGameState = {
+  board: generateSudokuBoard("medium"),
+  selectedCell: null,
+  notesMode: false,
+  elapsedSeconds: 0,
+  isCompleted: false,
+  currentDifficulty: "medium",
+};
+
+function isSudokuSolved(boardToCheck: TSudokuBoard) {
+  return boardToCheck.every((row) =>
+    row.every(
+      (cell) => cell.value !== null && cell.value === cell.solutionValue,
+    ),
   );
-  const [notesMode, setNotesMode] = useState(false);
-  const [elapsedSeconds, setElapsedSeconds] = useState(0);
-  const [isCompleted, setIsCompleted] = useState(false);
-  const [currentDifficulty, setCurrentDifficulty] =
-    useState<TDifficulty>("medium");
+}
 
-  useEffect(() => {
-    if (isCompleted) return;
+function sudokuGameReducer(
+  state: TSudokuGameState,
+  action: TSudokuGameAction,
+): TSudokuGameState {
+  switch (action.type) {
+    case "generateBoard":
+      return {
+        board: generateSudokuBoard(action.difficulty),
+        selectedCell: null,
+        notesMode: false,
+        elapsedSeconds: 0,
+        isCompleted: false,
+        currentDifficulty: action.difficulty,
+      };
 
-    const timerId = window.setInterval(() => {
-      setElapsedSeconds((currentSeconds) => currentSeconds + 1);
-    }, 1000);
+    case "toggleNotesMode":
+      return {
+        ...state,
+        notesMode: !state.notesMode,
+      };
 
-    return () => {
-      window.clearInterval(timerId);
-    };
-  }, [isCompleted]);
+    case "tickTimer":
+      return {
+        ...state,
+        elapsedSeconds: state.elapsedSeconds + 1,
+      };
 
-  function isSudokuSolved(boardToCheck: TSudokuBoard) {
-    return boardToCheck.every((row) =>
-      row.every(
-        (cell) => cell.value !== null && cell.value === cell.solutionValue,
-      ),
-    );
-  }
+    case "cellClicked": {
+      const clickedCell = state.board[action.row][action.col];
 
-  function handleGenerateBoard(difficulty: TDifficulty) {
-    setBoard(generateSudokuBoard(difficulty));
-    setSelectedCell(null);
-    setNotesMode(false);
-    setElapsedSeconds(0);
-    setIsCompleted(false);
-    setCurrentDifficulty(difficulty);
-  }
+      if (clickedCell.isGiven) {
+        return {
+          ...state,
+          selectedCell: null,
+        };
+      }
 
-  function handleRestartBoard() {
-    handleGenerateBoard(currentDifficulty);
-  }
-
-  function handleCellClick(row: number, col: number) {
-    const clickedCell = board[row][col];
-
-    if (clickedCell.isGiven) {
-      setSelectedCell(null);
-      return;
+      if (
+        state.selectedCell?.row === action.row &&
+        state.selectedCell?.col === action.col
+      ) {
+        return {
+          ...state,
+          selectedCell: null,
+        };
+      }
+      return {
+        ...state,
+        selectedCell: {
+          row: action.row,
+          col: action.col,
+        },
+      };
     }
 
-    if (selectedCell?.row === row && selectedCell?.col === col) {
-      setSelectedCell(null);
-      return;
-    }
+    case "numberEntered": {
+      if (!state.selectedCell) return state;
 
-    setSelectedCell({ row, col });
-  }
+      const { row, col } = state.selectedCell;
+      const selectedBoardCell = state.board[row][col];
+      const isCorrectValue = action.value === selectedBoardCell.solutionValue;
 
-  function handleNotesToggle() {
-    setNotesMode((currentMode) => !currentMode);
-  }
-
-  function handleNumber(value: TSudokuValue) {
-    if (!selectedCell) return;
-
-    const selectedBoardCell = board[selectedCell.row][selectedCell.col];
-    const isCorrectValue = value === selectedBoardCell.solutionValue;
-
-    setBoard((currentBoard) => {
-      const nextBoard = currentBoard.map((row, rowIndex) =>
-        row.map((cell, colIndex) => {
-          const isSelectedCell =
-            selectedCell.row === rowIndex && selectedCell.col === colIndex;
+      const nextBoard = state.board.map((boardRow, rowIndex) =>
+        boardRow.map((cell, colIndex) => {
+          const isSelectedCell = row === rowIndex && col === colIndex;
 
           if (!isSelectedCell || cell.isGiven) return cell;
 
-          if (notesMode) {
-            const hasNote = cell.notes.includes(value);
+          if (state.notesMode) {
+            const hasNote = cell.notes.includes(action.value);
 
             return {
               ...cell,
               notes: hasNote
-                ? cell.notes.filter((note) => note !== value)
-                : [...cell.notes, value],
+                ? cell.notes.filter((note) => note !== action.value)
+                : [...cell.notes, action.value],
             };
           }
 
-          if (cell.isError && cell.value === value) {
+          if (cell.isError && cell.value === action.value) {
             return {
               ...cell,
               value: null,
@@ -106,34 +129,73 @@ export function useSudokuGame() {
 
           return {
             ...cell,
-            value,
+            value: action.value,
             notes: [],
             isGiven: isCorrectValue,
             isError: !isCorrectValue,
           };
         }),
       );
-      if (isCorrectValue && isSudokuSolved(nextBoard)) {
-        setIsCompleted(true);
-      }
-      return nextBoard;
-    });
 
-    if (isCorrectValue) {
-      setSelectedCell(null);
+      const isCompleted = isCorrectValue && isSudokuSolved(nextBoard);
+      return {
+        ...state,
+        board: nextBoard,
+        isCompleted,
+        selectedCell: isCorrectValue ? null : state.selectedCell,
+      };
     }
+
+    default:
+      return state;
+  }
+}
+
+export function useSudokuGame() {
+  const [state, dispatch] = useReducer(sudokuGameReducer, initialState);
+
+  useEffect(() => {
+    if (state.isCompleted) return;
+
+    const timerId = window.setInterval(() => {
+      dispatch({ type: "tickTimer" });
+    }, 1000);
+
+    return () => {
+      window.clearInterval(timerId);
+    };
+  }, [state.isCompleted]);
+
+  function handleGenerateBoard(difficulty: TDifficulty) {
+    dispatch({ type: "generateBoard", difficulty });
+  }
+
+  function handleRestartBoard() {
+    handleGenerateBoard(state.currentDifficulty);
+  }
+
+  function handleCellClick(row: number, col: number) {
+    dispatch({ type: "cellClicked", row, col });
+  }
+
+  function handleNotesToggle() {
+    dispatch({ type: "toggleNotesMode" });
+  }
+
+  function handleNumber(value: TSudokuValue) {
+    dispatch({ type: "numberEntered", value });
   }
   return {
-    board,
-    selectedCell,
-    notesMode,
+    board: state.board,
+    selectedCell: state.selectedCell,
+    notesMode: state.notesMode,
+    elapsedSeconds: state.elapsedSeconds,
+    isCompleted: state.isCompleted,
+    currentDifficulty: state.currentDifficulty,
     handleGenerateBoard,
     handleCellClick,
     handleNotesToggle,
     handleNumber,
-    elapsedSeconds,
-    isCompleted,
-    currentDifficulty,
     handleRestartBoard,
   };
 }
