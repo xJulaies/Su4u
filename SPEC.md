@@ -84,8 +84,8 @@ Professional V1 does not include:
 | --- | --- | --- |
 | Public pages and routing | Partial | Home, rules, history, game, about, and imprint routes exist. Dedicated Daily, account settings, and not-found experiences are missing. |
 | Core Sudoku generation | Partial | Unique-solution generation exists, but difficulty is based primarily on removed cells rather than a deterministic logical rating solver. |
-| Core game input | Partial | Cell selection, number entry, notes, immediate errors, timer, and completion exist. Several specified behaviors remain missing or differ from the target model. |
-| Highlighting | Partial | Selected-cell highlighting exists. Peer and matching-value highlighting are missing. |
+| Core game input | Partial | Cell selection, number entry, locked correct values, completed-number controls, notes, automatic peer-note cleanup, immediate errors, restart, timer, and completion exist. Delete controls, mistake counting, and complete keyboard input remain missing. |
+| Highlighting | Partial | Selected, peer, and matching-value highlighting exist. The visual distinction between original givens and player-solved values still needs refinement and complete accessibility verification. |
 | Hint mode | Planned | No mode selection or hint system exists. |
 | Persistence and synchronization | Planned | Active games and statistics are not persisted. No backend exists. |
 | Daily Sudoku | Planned | No Daily puzzle or calendar exists. |
@@ -94,8 +94,8 @@ Professional V1 does not include:
 | Statistics | Partial | The current game displays elapsed time only. Persistent aggregate statistics are missing. |
 | Localization | Planned | UI content is currently hard-coded primarily in English. |
 | Theme support | Partial | Light and dark themes exist, but system-first selection and account synchronization are incomplete. |
-| Accessibility | Partial | Native controls and some dialog semantics exist. Complete keyboard gameplay, focus behavior, and product-level verification are missing. |
-| Responsive web UI | Partial | Responsive styling exists but has not been verified against all V1 layout requirements. |
+| Accessibility | Partial | Native controls, modal New Game semantics, and initial dialog focus handling exist. Complete keyboard gameplay and product-level accessibility verification remain missing. |
+| Responsive web UI | Partial | The current game board and controls are verified across desktop and mobile layouts. Complete tablet and product-wide responsive verification remains outstanding. |
 | Automated testing | Partial | Vitest unit and integration testing, V8 coverage thresholds, and Playwright browser testing are configured with an initial game-focused suite. Full product coverage remains ongoing. |
 | Backend resilience | Planned | No backend or synchronization layer exists. |
 

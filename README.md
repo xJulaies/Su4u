@@ -23,11 +23,14 @@ Su4u is under active development. The current codebase is a partial implementati
 - Light and dark themes
 - Generated `Easy`, `Medium`, and `Hard` Sudoku boards
 - Unique-solution puzzle generation
-- Cell selection and number input
-- Notes mode
+- Cell selection with row, column, box, and matching-value highlighting
+- Number input with locked correct entries and completed-number controls
+- Notes mode with automatic peer-note cleanup after correct entries
 - Immediate incorrect-answer feedback
 - Game timer and completion detection
-- Completion dialog and same-difficulty restart
+- Responsive mobile game controls with a full-width Sudoku board
+- New Game dialog with difficulty selection, same-puzzle restart, and progress confirmation
+- Completion dialog with a same-difficulty next-game action
 - Clerk sign-in and sign-up
 - Protected dashboard route with a placeholder dashboard
 - Vitest unit and integration tests with V8 coverage thresholds
@@ -38,7 +41,6 @@ Su4u is under active development. The current codebase is a partial implementati
 
 - Guest-first play without mandatory registration
 - Logically rated, uniquely solvable puzzles that never require guessing
-- Improved board highlighting and automatic note cleanup
 - Normal mode and a separate three-hint mode
 - Complete keyboard gameplay
 - Pause, restart, give-up, and active-game lifecycle
@@ -125,7 +127,7 @@ The current generator:
 
 The current difficulty rating is primarily based on the number of removed cells. Professional V1 requires a deterministic logical solver that rates puzzles by the techniques needed to solve them. A clue-count-only rating is not sufficient for the target product.
 
-`useSudokuGame` currently owns the game reducer, board, selection, notes mode, timer, difficulty, number entry, board generation, and completion state.
+`useSudokuGame` coordinates reducer-managed board state, selection, notes mode, timer, difficulty, number entry, board generation, restart behavior, completion state, and derived game progress.
 
 ## Routing
 
