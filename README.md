@@ -1,43 +1,135 @@
 # Su4u
 
-Su4u is a Sudoku-themed React learning project. It introduces Sudoku, explains the rules and history, and includes a playable Sudoku game with generated puzzles, notes, error feedback, a timer, win dialog, theming, routing, and a first Clerk authentication flow.
+Su4u is a modern Sudoku web application built with React and TypeScript. The current application provides generated puzzles, notes, immediate answer feedback, a timer, theming, public information pages, and an initial authenticated dashboard flow.
 
-## Live Demo
+The project is being developed toward **Su4u Professional V1**: a reliable guest-first Sudoku experience with validated difficulty levels, local and cloud persistence, personal statistics, a Daily Sudoku calendar, bilingual content, and comprehensive automated testing.
 
-The app is deployed on GitHub Pages:
+## Live demo
+
+The current version is deployed on GitHub Pages:
 
 **[Open Su4u](https://xjulaies.github.io/Su4u)**
 
-## Tech Stack
+GitHub Pages is the current deployment target, not a permanent product constraint. The application is expected to move when its future backend and hosting requirements are implemented.
 
-- React with TypeScript
-- Vite
-- Tailwind CSS 4 via `@tailwindcss/vite`
-- TanStack Router with file-based routes
-- Clerk via `@clerk/react`
+## Project status
+
+Su4u is under active development. The current codebase is a partial implementation of the Professional V1 product specification.
+
+### Available now
+
+- Public home, rules, history, game, about, and imprint pages
+- Shared responsive layout with navigation and footer
+- Light and dark themes
+- Generated `Easy`, `Medium`, and `Hard` Sudoku boards
+- Unique-solution puzzle generation
+- Cell selection and number input
+- Notes mode
+- Immediate incorrect-answer feedback
+- Game timer and completion detection
+- Completion dialog and same-difficulty restart
+- Clerk sign-in and sign-up
+- Protected dashboard route with a placeholder dashboard
+- GitHub Pages deployment
+
+### Professional V1 target
+
+- Guest-first play without mandatory registration
+- Logically rated, uniquely solvable puzzles that never require guessing
+- Improved board highlighting and automatic note cleanup
+- Normal mode and a separate three-hint mode
+- Complete keyboard gameplay
+- Pause, restart, give-up, and active-game lifecycle
+- One locally saved active guest game
+- Optional account synchronization across devices
+- Personal statistics and best times by difficulty and mode
+- One shared Daily Sudoku per date with a public archive calendar
+- Authenticated dashboard and account deletion
+- English and German localization
+- Responsive mobile, tablet, and desktop support
+- Automated unit, integration, end-to-end, and regression tests
+- Graceful operation during temporary backend or network failures
+
+Public leaderboards, streaks, advertising, analytics, monetization, native apps, PWA installation, `Very Hard`, and `Extreme` difficulty are not part of Professional V1.
+
+## Product and contribution documentation
+
+- [`SPEC.md`](./SPEC.md) is the source of truth for product behavior, requirements, implementation status, and acceptance criteria.
+- [`AGENTS.md`](./AGENTS.md) defines mandatory architecture, planning, testing, quality, and collaboration rules for coding agents.
+- This README provides the human-facing project overview and setup instructions.
+
+Every new feature must be planned and explicitly approved before implementation. The plan must cover scope, architecture, expected files, testing, risks, and relevant alternatives.
+
+## Tech stack
+
+- React 19
+- TypeScript 6
+- Vite 8
+- Tailwind CSS 4 through `@tailwindcss/vite`
 - CSS Modules for the Sudoku game UI
-- Feature-based architecture with Atomic Design-inspired components
+- TanStack Router with file-based routing and automatic code splitting
+- Clerk through `@clerk/react`
+- ESLint 10
 
-## Features
+## Architecture
 
-- Public pages for home, rules, history, about, impressum, and the Sudoku game
-- Shared public layout with navbar and footer
-- Light/dark theme handling with `useTheme`
-- Generated Sudoku puzzles for `easy`, `medium`, and `hard`
-- Unique-solution Sudoku generation
-- Cell selection, number input, notes mode, and wrong-answer state
-- Game timer and stats display
-- Win detection with a completion dialog
-- Restart with the current difficulty
-- Clerk sign-in and sign-up pages
-- Navbar auth state with Clerk `Show` and `UserButton`
-- Protected dashboard route group through TanStack Router `beforeLoad`
+Su4u combines a feature-based structure with Atomic Design.
+
+```text
+src/
+  assets/
+  features/
+    about/
+    auth/
+    dashboard/
+    game/
+    history/
+    home/
+    impressum/
+    rules/
+  routes/
+  settings/
+  shared/
+    atoms/
+    lib/
+    molecules/
+    templates/
+```
+
+Responsibilities:
+
+- `features/*` contains feature-specific UI, state, and domain behavior.
+- `shared/*` contains genuinely reusable cross-feature building blocks.
+- `routes/*` contains TanStack Router route definitions.
+- `settings/*` contains centralized application content and settings.
+- `src/routeTree.gen.ts` is generated by TanStack Router and must not be edited manually.
+
+Atomic Design file suffixes:
+
+- `.atm.tsx` for atoms
+- `.mol.tsx` for molecules
+- `.org.tsx` for organisms
+- `.tpl.tsx` for templates
+
+## Current Sudoku implementation
+
+The current generator:
+
+1. Creates an empty 9x9 grid.
+2. Produces a valid solved grid through backtracking.
+3. Removes cells in randomized order based on the selected difficulty.
+4. Retains a removal only when the puzzle still has exactly one solution.
+5. Converts the puzzle and solution into the UI board model.
+
+The current difficulty rating is primarily based on the number of removed cells. Professional V1 requires a deterministic logical solver that rates puzzles by the techniques needed to solve them. A clue-count-only rating is not sufficient for the target product.
+
+`useSudokuGame` currently owns the game reducer, board, selection, notes mode, timer, difficulty, number entry, board generation, and completion state.
 
 ## Routing
 
-Routes are handled by TanStack Router.
+TanStack Router provides file-based routing.
 
-Public routes:
+Current public routes:
 
 - `/`
 - `/rules`
@@ -48,29 +140,101 @@ Public routes:
 - `/sign-in/$`
 - `/sign-up/$`
 
-Protected route group:
+Current protected route:
 
-- `src/routes/_authenticated.tsx`
-- `src/routes/_authenticated/dashboard/route.tsx`
-- `src/routes/_authenticated/dashboard/index.tsx`
+- `/dashboard`
 
-The `_authenticated` route is a pathless layout route. It does not add a URL segment, but it wraps protected child routes. The dashboard resolves to:
+`src/routes/_authenticated.tsx` is a pathless protected layout. It reads Clerk authentication from the TanStack Router context and redirects signed-out visitors to the sign-in flow.
 
-```txt
-/dashboard
+```text
+ClerkProvider
+  -> App useAuth()
+  -> RouterProvider context
+  -> authenticated beforeLoad guard
+  -> protected route
 ```
 
-The auth guard uses Clerk auth data passed through TanStack Router context:
+Professional V1 will add a public Daily route, account settings, and a dedicated not-found experience.
 
-```txt
-ClerkProvider -> App useAuth() -> RouterProvider context -> beforeLoad
+## Authentication
+
+The application uses `@clerk/react` consistently for:
+
+- `ClerkProvider`
+- `useAuth`
+- `Show`
+- `UserButton`
+- `SignIn`
+- `SignUp`
+
+Do not mix `@clerk/react` with `@clerk/clerk-react`; they provide separate contexts.
+
+The application currently requires:
+
+```text
+VITE_CLERK_PUBLISHABLE_KEY=...
 ```
 
-If a user is not signed in, the guard redirects to the sign-in route.
+Environment files and secrets must never be committed. Agents may not create or edit environment files without explicit approval.
 
-## GitHub Pages
+## Local development
 
-The app is configured for the GitHub Pages project path:
+### Prerequisites
+
+- Node.js 22
+- npm
+- A Clerk publishable key for the configured authentication flow
+
+### Install
+
+```bash
+npm install
+```
+
+### Configure authentication
+
+Provide `VITE_CLERK_PUBLISHABLE_KEY` through the local Vite environment before starting the application.
+
+### Start the development server
+
+```bash
+npm run dev
+```
+
+### Create a production build
+
+```bash
+npm run build
+```
+
+### Run ESLint
+
+```bash
+npm run lint
+```
+
+### Preview the production build
+
+```bash
+npm run preview
+```
+
+## Testing status
+
+Automated tests are mandatory for future functional changes and central to the Professional V1 quality requirements. The project does not yet have a configured test runner or `test` script.
+
+The planned test strategy includes:
+
+- unit tests for Sudoku domain logic, reducers, and utilities;
+- integration tests for meaningful component and system interactions;
+- end-to-end tests for critical game and authentication journeys; and
+- regression tests for every defect fix.
+
+Introducing the test stack requires a separately reviewed plan because it adds project dependencies and configuration.
+
+## Current deployment
+
+The current GitHub Pages deployment uses the `/Su4u` project base path.
 
 ```ts
 // vite.config.ts
@@ -82,95 +246,18 @@ base: "/Su4u";
 basepath: "/Su4u";
 ```
 
-The deploy workflow copies `dist/index.html` to `dist/404.html` so direct SPA URLs such as `/Su4u/dashboard` can be served by GitHub Pages.
+Clerk authentication URLs currently use the same base path. The deployment workflow builds on pushes to `main`, copies `dist/index.html` to `dist/404.html` for SPA fallback behavior, and publishes `dist` through GitHub Pages.
 
-## Authentication
+Deployment-specific paths must remain separate from Sudoku domain behavior so the application can migrate to different hosting when a backend is introduced.
 
-This project uses only `@clerk/react`. Do not mix it with `@clerk/clerk-react`, because both packages create their own Clerk context. Provider, hooks, and UI components must come from the same package.
+## Quality requirements
 
-Used Clerk pieces:
+Before a functional task is complete, all relevant checks must pass:
 
-- `ClerkProvider`
-- `useAuth`
-- `Show`
-- `UserButton`
-- `SignIn`
-- `SignUp`
+- automated tests once the test stack is configured;
+- TypeScript validation;
+- ESLint;
+- production build; and
+- browser verification for visible UI changes.
 
-The app expects this environment variable:
-
-```txt
-VITE_CLERK_PUBLISHABLE_KEY=...
-```
-
-Clerk redirects are configured for the GitHub Pages base path:
-
-```tsx
-signInUrl = "/Su4u/sign-in";
-signUpUrl = "/Su4u/sign-up";
-signInForceRedirectUrl = "/Su4u/dashboard";
-signUpForceRedirectUrl = "/Su4u/dashboard";
-afterSignOutUrl = "/Su4u";
-```
-
-## Sudoku Logic
-
-The Sudoku generator:
-
-1. Creates an empty 9x9 grid.
-2. Fills it with a valid solved board using backtracking.
-3. Removes cells in random order based on difficulty.
-4. Keeps a removal only if the puzzle still has exactly one solution.
-5. Converts the puzzle and solution into a UI board model.
-
-The game hook, `useSudokuGame`, owns the board state, selected cell, notes mode, timer, current difficulty, board generation, cell clicks, number input, and completion state.
-
-## Project Structure
-
-```txt
-src/
-  features/
-    auth/
-    dashboard/
-    game/
-    home/
-    rules/
-    history/
-    about/
-    impressum/
-  routes/
-  settings/
-  shared/
-```
-
-The project uses a mixed learning structure:
-
-- `features/*` for feature-specific UI and logic
-- `shared/*` for reusable atoms, molecules, templates, hooks, and types
-- `routes/*` for TanStack Router route files
-- `settings/*` for central text content
-
-## Scripts
-
-```bash
-npm run dev
-npm run build
-npm run lint
-npm run preview
-```
-
-## Current Learning Focus
-
-- Clerk integration in a Vite React app
-- Passing Clerk auth state into TanStack Router context
-- Protecting routes with `beforeLoad`
-- Understanding pathless route groups like `_authenticated`
-- Handling GitHub Pages base paths with Vite and TanStack Router
-- Building Sudoku game state with reusable UI components
-
-## Possible Next Steps
-
-- Improve the dashboard beyond the current placeholder
-- Add a dashboard link that only appears for signed-in users
-- Add mistake counting and optional scoring
-- Extract repeated time formatting into a small helper
+Detailed contribution requirements are defined in [`AGENTS.md`](./AGENTS.md).
