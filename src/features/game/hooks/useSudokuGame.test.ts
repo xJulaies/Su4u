@@ -46,6 +46,15 @@ describe("useSudokuGame", () => {
     expect(result.current.notesMode).toBe(true);
     expect(result.current.board[0][0].notes).toEqual([5]);
     expect(result.current.completedValues).not.toContain(5);
+    expect(result.current.hasProgress).toBe(true);
+
+    act(() => {
+      result.current.handleRestartBoard();
+    });
+
+    expect(result.current.board[0][0].notes).toEqual([]);
+    expect(result.current.hasProgress).toBe(false);
+    expect(result.current.elapsedSeconds).toBe(0);
 
     act(() => {
       result.current.handleGenerateBoard("hard");
@@ -54,12 +63,6 @@ describe("useSudokuGame", () => {
     expect(generateSudokuBoardMock).toHaveBeenLastCalledWith("hard");
     expect(result.current.currentDifficulty).toBe("hard");
     expect(result.current.elapsedSeconds).toBe(0);
-
-    act(() => {
-      result.current.handleRestartBoard();
-    });
-
-    expect(generateSudokuBoardMock).toHaveBeenLastCalledWith("hard");
   });
 
   it("stops the timer after completion", () => {

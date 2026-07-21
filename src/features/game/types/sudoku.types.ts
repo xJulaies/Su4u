@@ -40,9 +40,15 @@ export type TSudokuBoardProps = {
   onCellClick: (row: number, col: number) => void;
 };
 
-export type TSudokuGenerateBtnProps = {
-  text: string;
+export type TSudokuNewGameBtnProps = {
   onClick: () => void;
+};
+
+export type TSudokuNewGameDialogProps = {
+  hasProgress: boolean;
+  onClose: () => void;
+  onRestart: () => void;
+  onNewGame: (difficulty: TDifficulty) => void;
 };
 
 export type TSudokuNotesToggleProps = {

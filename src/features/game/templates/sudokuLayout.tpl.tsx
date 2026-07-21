@@ -1,14 +1,17 @@
+import { useState } from "react";
 import { PublicLayout } from "../../../shared/templates/publicLayout/public.layout.tpl";
 import { SudokuBoard } from "../organisms/sudokuBoard.org";
 import styles from "../styles/sudoku.module.css";
 import { SudokuNotesToggle } from "../atoms/sudokuNotesToggle.atm";
 import { SudokuNumberPad } from "../molecules/sudokuNumberPad.mol";
-import { GenerateSudokuBtn } from "../atoms/sudokuGenerateBtn.atm";
+import { SudokuNewGameButton } from "../atoms/sudokuNewGameBtn.atm";
 import { useSudokuGame } from "../hooks/useSudokuGame";
 import { SudokuStats } from "../molecules/sudokuStats.mol";
 import { SudokuWinDialog } from "../molecules/sudokuWinDialog.mol";
+import { SudokuNewGameDialog } from "../molecules/sudokuNewGameDialog.mol";
 
 export function SudokuLayout() {
+  const [isGameDialogOpen, setIsGameDialogOpen] = useState(false);
   const {
     board,
     selectedCell,
@@ -20,8 +23,20 @@ export function SudokuLayout() {
     elapsedSeconds,
     isCompleted,
     completedValues,
+    hasProgress,
+    currentDifficulty,
     handleRestartBoard,
   } = useSudokuGame();
+
+  function handleRestart() {
+    handleRestartBoard();
+    setIsGameDialogOpen(false);
+  }
+
+  function handleNewGame(difficulty: typeof currentDifficulty) {
+    handleGenerateBoard(difficulty);
+    setIsGameDialogOpen(false);
+  }
 
   return (
     <PublicLayout>
@@ -30,8 +45,16 @@ export function SudokuLayout() {
           <SudokuWinDialog
             isOpen={isCompleted}
             elapsedSeconds={elapsedSeconds}
-            onPlayAgain={handleRestartBoard}
+            onPlayAgain={() => handleGenerateBoard(currentDifficulty)}
           />
+          {isGameDialogOpen && (
+            <SudokuNewGameDialog
+              hasProgress={hasProgress}
+              onClose={() => setIsGameDialogOpen(false)}
+              onRestart={handleRestart}
+              onNewGame={handleNewGame}
+            />
+          )}
           <section className={styles.playArea}>
             <SudokuStats elapsedSeconds={elapsedSeconds} />
             <SudokuBoard
@@ -41,29 +64,20 @@ export function SudokuLayout() {
             />
 
             <section className={styles.controls}>
-              <SudokuNumberPad
-                completedValues={completedValues}
-                onNumberClick={handleNumber}
-              />
               <SudokuNotesToggle
                 isActive={notesMode}
                 onClick={handleNotesToggle}
               />
+              <SudokuNumberPad
+                completedValues={completedValues}
+                onNumberClick={handleNumber}
+              />
             </section>
           </section>
 
-          <aside className="flex flex-col gap-4">
-            <GenerateSudokuBtn
-              onClick={() => handleGenerateBoard("easy")}
-              text="Generate easy board"
-            />
-            <GenerateSudokuBtn
-              onClick={() => handleGenerateBoard("medium")}
-              text="Generate medium board"
-            />
-            <GenerateSudokuBtn
-              onClick={() => handleGenerateBoard("hard")}
-              text="Generate hard board"
+          <aside className={styles.sidePanel}>
+            <SudokuNewGameButton
+              onClick={() => setIsGameDialogOpen(true)}
             />
           </aside>
         </section>

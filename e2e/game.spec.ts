@@ -26,7 +26,45 @@ test("supports the current public Sudoku flow", async ({ page }) => {
   await expect(page.getByRole("button", { name: "Notes on" })).toBeVisible();
   await expect(editableCell).toContainText("1");
 
-  await page.getByRole("button", { name: "Generate easy board" }).click();
+  const numberControls = page
+    .locator("button:not([data-row])")
+    .filter({ hasText: /^[1-9]$/ });
+  const numberControlPositions = await numberControls.evaluateAll((elements) =>
+    elements.map((element) => element.getBoundingClientRect().y),
+  );
+  expect(numberControlPositions).toHaveLength(9);
+  expect(
+    Math.max(...numberControlPositions) - Math.min(...numberControlPositions),
+  ).toBeLessThanOrEqual(1);
+
+  await page.getByRole("button", { name: "New Game" }).click();
+  const gameDialog = page.getByRole("dialog");
+  await expect(gameDialog).toBeVisible();
+  const gameDialogBox = await gameDialog.boundingBox();
+  const dialogViewport = page.viewportSize();
+
+  expect(gameDialogBox).not.toBeNull();
+  expect(dialogViewport).not.toBeNull();
+
+  if (gameDialogBox && dialogViewport) {
+    expect(
+      Math.abs(
+        gameDialogBox.x + gameDialogBox.width / 2 - dialogViewport.width / 2,
+      ),
+    ).toBeLessThanOrEqual(1);
+    expect(
+      Math.abs(
+        gameDialogBox.y +
+          gameDialogBox.height / 2 -
+          dialogViewport.height / 2,
+      ),
+    ).toBeLessThanOrEqual(1);
+  }
+
+  await page.getByRole("button", { name: "Easy", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Start easy game", exact: true })
+    .click();
   await expect(cells).toHaveCount(81);
 
   const board = page.locator("button[data-row][data-col]").first().locator("..");
@@ -39,5 +77,9 @@ test("supports the current public Sudoku flow", async ({ page }) => {
   if (boardBox && viewport) {
     expect(boardBox.x).toBeGreaterThanOrEqual(0);
     expect(boardBox.x + boardBox.width).toBeLessThanOrEqual(viewport.width);
+
+    if (viewport.width <= 500) {
+      expect(boardBox.width).toBeGreaterThanOrEqual(viewport.width - 20);
+    }
   }
 });

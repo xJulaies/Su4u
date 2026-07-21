@@ -54,6 +54,42 @@ describe("sudokuGameReducer", () => {
     expect(timerState.elapsedSeconds).toBe(1);
   });
 
+  it("restarts the same puzzle and clears player progress", () => {
+    const board = createTestBoard([
+      { row: 0, col: 0 },
+      { row: 0, col: 1 },
+    ]);
+    board[0][0] = {
+      ...board[0][0],
+      value: 3,
+      notes: [5],
+      isError: true,
+    };
+    const state: TSudokuGameState = {
+      ...createState(),
+      board,
+      selectedCell: { row: 0, col: 0 },
+      notesMode: true,
+      elapsedSeconds: 42,
+    };
+
+    const restartedState = sudokuGameReducer(state, {
+      type: "gameRestarted",
+    });
+
+    expect(restartedState.board[0][0]).toMatchObject({
+      value: null,
+      notes: [],
+      isError: false,
+      isGiven: false,
+    });
+    expect(restartedState.board[0][2]).toBe(board[0][2]);
+    expect(restartedState.selectedCell).toBeNull();
+    expect(restartedState.notesMode).toBe(false);
+    expect(restartedState.elapsedSeconds).toBe(0);
+    expect(restartedState.currentDifficulty).toBe("medium");
+  });
+
   it("selects every cell and deselects a repeated selection", () => {
     const selectedState = sudokuGameReducer(createState(), {
       type: "cellClicked",

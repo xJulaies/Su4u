@@ -5,7 +5,10 @@ import {
   sudokuGameReducer,
 } from "../lib/sudokuGameReducer";
 import type { TDifficulty, TSudokuValue } from "../types/sudoku.types";
-import { getCompletedSudokuValues } from "../lib/sudokuBoardState";
+import {
+  getCompletedSudokuValues,
+  hasSudokuProgress,
+} from "../lib/sudokuBoardState";
 
 export function useSudokuGame() {
   const [state, dispatch] = useReducer(
@@ -35,7 +38,7 @@ export function useSudokuGame() {
   }
 
   function handleRestartBoard() {
-    handleGenerateBoard(state.currentDifficulty);
+    dispatch({ type: "gameRestarted" });
   }
 
   function handleCellClick(row: number, col: number) {
@@ -58,6 +61,7 @@ export function useSudokuGame() {
     isCompleted: state.isCompleted,
     currentDifficulty: state.currentDifficulty,
     completedValues: getCompletedSudokuValues(state.board),
+    hasProgress: hasSudokuProgress(state.board),
     handleGenerateBoard,
     handleCellClick,
     handleNotesToggle,

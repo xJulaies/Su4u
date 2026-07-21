@@ -6,6 +6,7 @@ import { SudokuNotesToggle } from "../atoms/sudokuNotesToggle.atm";
 import { SudokuBoard } from "../organisms/sudokuBoard.org";
 import { SudokuNumberPad } from "./sudokuNumberPad.mol";
 import { SudokuWinDialog } from "./sudokuWinDialog.mol";
+import { SudokuNewGameDialog } from "./sudokuNewGameDialog.mol";
 import { createTestBoard } from "../test/testBoards";
 
 describe("Sudoku components", () => {
@@ -135,5 +136,50 @@ describe("Sudoku components", () => {
     expect(screen.getByRole("dialog")).toHaveTextContent("Time: 01:05");
     await user.click(screen.getByRole("button", { name: "Play again" }));
     expect(onPlayAgain).toHaveBeenCalledOnce();
+  });
+
+  it("starts a selected difficulty directly without progress", async () => {
+    const user = userEvent.setup();
+    const onNewGame = vi.fn();
+
+    render(
+      <SudokuNewGameDialog
+        hasProgress={false}
+        onClose={vi.fn()}
+        onRestart={vi.fn()}
+        onNewGame={onNewGame}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Hard" }));
+    expect(onNewGame).toHaveBeenCalledWith("hard");
+  });
+
+  it("confirms restart when the current game has progress", async () => {
+    const user = userEvent.setup();
+    const onRestart = vi.fn();
+
+    render(
+      <SudokuNewGameDialog
+        hasProgress
+        onClose={vi.fn()}
+        onRestart={onRestart}
+        onNewGame={vi.fn()}
+      />,
+    );
+
+    await user.click(
+      screen.getByRole("button", { name: "Restart current game" }),
+    );
+    expect(
+      screen.getByRole("heading", { name: "Discard current progress?" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Keep playing" }),
+    ).toHaveFocus();
+    expect(onRestart).not.toHaveBeenCalled();
+
+    await user.click(screen.getByRole("button", { name: "Restart game" }));
+    expect(onRestart).toHaveBeenCalledOnce();
   });
 });

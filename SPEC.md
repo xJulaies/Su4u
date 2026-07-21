@@ -144,6 +144,7 @@ Rules:
 
 - Restarting resets user entries, notes, mistakes, elapsed time, pause state, and the hint allowance while preserving the same puzzle, difficulty, and mode.
 - Starting a new game resets all per-game state and loads a different puzzle.
+- Restart and difficulty selection are available through a shared `New Game` dialog.
 - Restart, new game, mode changes, and give-up actions require confirmation when meaningful progress exists.
 - A page change, tab close, browser close, or connectivity loss is not a give-up action.
 - A given-up game is recorded separately and is not treated as a loss.
@@ -252,6 +253,8 @@ Every final number entry is checked immediately against the puzzle solution.
 - When a number is correctly present nine times through givens and solved cells, its number control is marked complete and disabled.
 - A visible delete control removes an incorrect entry or all notes from the selected editable cell.
 - There is no undo or redo feature.
+- On narrow mobile layouts, the Notes control appears directly below the board, followed by all nine number controls in one row.
+- The board and its controls use the available mobile width with only a minimal outer margin while retaining their desktop maximum size.
 
 ## Keyboard controls
 

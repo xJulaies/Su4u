@@ -38,3 +38,27 @@ export function getCompletedSudokuValues(
     return correctOccurrences === 9;
   });
 }
+
+export function hasSudokuProgress(board: TSudokuBoard): boolean {
+  return board.some((row) =>
+    row.some(
+      (cell) =>
+        !cell.isGiven && (cell.value !== null || cell.notes.length > 0),
+    ),
+  );
+}
+
+export function restartSudokuBoard(board: TSudokuBoard): TSudokuBoard {
+  return board.map((row) =>
+    row.map((cell) =>
+      cell.isGiven
+        ? cell
+        : {
+            ...cell,
+            value: null,
+            notes: [],
+            isError: false,
+          },
+    ),
+  );
+}

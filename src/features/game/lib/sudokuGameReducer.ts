@@ -9,6 +9,7 @@ import {
   getCompletedSudokuValues,
   isPeerPosition,
   isSolvedCell,
+  restartSudokuBoard,
 } from "./sudokuBoardState";
 
 export type TSudokuGameState = {
@@ -22,6 +23,7 @@ export type TSudokuGameState = {
 
 export type TSudokuGameAction =
   | { type: "boardGenerated"; difficulty: TDifficulty; board: TSudokuBoard }
+  | { type: "gameRestarted" }
   | { type: "toggleNotesMode" }
   | { type: "tickTimer" }
   | { type: "cellClicked"; row: number; col: number }
@@ -61,6 +63,16 @@ export function sudokuGameReducer(
         elapsedSeconds: 0,
         isCompleted: false,
         currentDifficulty: action.difficulty,
+      };
+
+    case "gameRestarted":
+      return {
+        ...state,
+        board: restartSudokuBoard(state.board),
+        selectedCell: null,
+        notesMode: false,
+        elapsedSeconds: 0,
+        isCompleted: false,
       };
 
     case "toggleNotesMode":

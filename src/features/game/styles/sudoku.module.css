@@ -3,11 +3,12 @@
   min-height: 70vh;
   align-items: center;
   justify-content: center;
-  padding: 2rem 1rem;
+  padding: 2rem 0.5rem;
 }
 
 .gameShell {
   display: flex;
+  width: 100%;
   align-items: center;
   justify-content: center;
   gap: 2rem;
@@ -15,6 +16,7 @@
 
 .playArea {
   display: flex;
+  width: min(100%, 33.75rem);
   flex-direction: column;
   align-items: center;
   gap: 1.25rem;
@@ -22,7 +24,8 @@
 
 .controls {
   display: flex;
-  flex-wrap: wrap;
+  width: 100%;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 1rem;
@@ -55,12 +58,15 @@
 
 .sidePanel {
   display: flex;
+  width: 100%;
   align-items: center;
   justify-content: center;
 }
 
 .board {
   display: grid;
+  box-sizing: border-box;
+  width: 100%;
   grid-template-columns: repeat(9, minmax(0, 1fr));
   overflow: hidden;
   border: 3px solid var(--theme-primary);
@@ -72,7 +78,7 @@
 
 .cell {
   display: flex;
-  width: clamp(2rem, 9vw, 3.75rem);
+  width: 100%;
   aspect-ratio: 1 / 1;
   align-items: center;
   justify-content: center;
@@ -190,15 +196,17 @@
 
 .numberPad {
   display: grid;
-
+  order: 2;
+  width: 100%;
+  min-width: 0;
   grid-template-columns: repeat(9, minmax(0, 1fr));
-  gap: 0.5rem;
+  gap: clamp(0.2rem, 1vw, 0.5rem);
 }
 
 .numberButton {
   display: flex;
   cursor: pointer;
-  width: clamp(2.25rem, 9vw, 3.25rem);
+  width: 100%;
   aspect-ratio: 1 / 1;
   align-items: center;
   justify-content: center;
@@ -244,7 +252,7 @@
   box-shadow: none;
 }
 
-.generateButton {
+.newGameButton {
   cursor: pointer;
   border: 1px solid color-mix(in srgb, var(--theme-accent) 70%, transparent);
   border-radius: 0.75rem;
@@ -268,16 +276,114 @@
     box-shadow 150ms ease;
 }
 
-.generateButton:hover {
+.newGameButton:hover {
   transform: translateY(-1px);
   filter: brightness(1.04);
   box-shadow: 0 1.25rem 2.5rem
     color-mix(in srgb, var(--theme-primary) 32%, transparent);
 }
 
-.generateButton:active {
+.newGameButton:active {
   transform: translateY(0);
   filter: brightness(0.98);
+}
+
+.gameDialog {
+  position: fixed;
+  inset: 0;
+  width: min(calc(100% - 2rem), 28rem);
+  max-height: calc(100dvh - 2rem);
+  margin: auto;
+  border: 1px solid var(--theme-border);
+  border-radius: 1rem;
+  background: var(--theme-surface);
+  color: var(--theme-text);
+  padding: 1.5rem;
+  overflow-y: auto;
+  box-shadow: 0 1.5rem 3.5rem
+    color-mix(in srgb, var(--theme-primary) 28%, transparent);
+}
+
+.gameDialog::backdrop {
+  background: color-mix(in srgb, var(--theme-base) 58%, transparent);
+  backdrop-filter: blur(0.45rem);
+}
+
+.gameDialogTitle {
+  margin: 0 0 0.75rem;
+  color: var(--theme-primary);
+  font-size: 1.75rem;
+  font-weight: 900;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.gameDialogText {
+  margin: 0;
+  color: var(--theme-text-muted);
+  font-weight: 700;
+  text-align: center;
+}
+
+.difficultySelection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.difficultyButtons,
+.gameDialogActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.gameDialogActions {
+  margin-top: 1.25rem;
+}
+
+.dialogPrimaryButton,
+.dialogSecondaryButton,
+.dialogTextButton {
+  cursor: pointer;
+  border-radius: 0.75rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+  font-weight: 800;
+}
+
+.dialogPrimaryButton {
+  border: 1px solid color-mix(in srgb, var(--theme-accent) 70%, transparent);
+  background: linear-gradient(
+    135deg,
+    var(--theme-primary),
+    var(--theme-secondary)
+  );
+  color: var(--theme-primary-content);
+}
+
+.dialogSecondaryButton {
+  display: block;
+  width: 100%;
+  margin-top: 1rem;
+  border: 1px solid var(--theme-border);
+  background: var(--theme-surface-muted);
+  color: var(--theme-text);
+}
+
+.gameDialogActions .dialogSecondaryButton {
+  width: auto;
+  margin-top: 0;
+}
+
+.dialogTextButton {
+  display: block;
+  margin: 1rem auto 0;
+  border: 0;
+  background: transparent;
+  color: var(--theme-text-muted);
 }
 
 .dialogOverlay {
@@ -364,17 +470,29 @@
   .board {
     border-width: 4px;
   }
+
+  .controls {
+    flex-direction: row;
+    flex-wrap: nowrap;
+  }
+
+  .numberPad {
+    order: 1;
+  }
+
+  .notesToggle {
+    order: 2;
+    flex-shrink: 0;
+  }
+
+  .sidePanel {
+    width: auto;
+  }
 }
 
 @media (max-width: 768px) {
   .gameShell {
     flex-direction: column;
     gap: 1.5rem;
-  }
-}
-
-@media (max-width: 640px) {
-  .numberPad {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
   }
 }
