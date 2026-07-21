@@ -19,6 +19,7 @@ export function SudokuLayout() {
     handleNumber,
     elapsedSeconds,
     isCompleted,
+    completedValues,
     handleRestartBoard,
   } = useSudokuGame();
 
@@ -40,7 +41,10 @@ export function SudokuLayout() {
             />
 
             <section className={styles.controls}>
-              <SudokuNumberPad onNumberClick={handleNumber} />
+              <SudokuNumberPad
+                completedValues={completedValues}
+                onNumberClick={handleNumber}
+              />
               <SudokuNotesToggle
                 isActive={notesMode}
                 onClick={handleNotesToggle}

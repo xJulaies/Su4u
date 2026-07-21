@@ -30,6 +30,8 @@ Su4u is under active development. The current codebase is a partial implementati
 - Completion dialog and same-difficulty restart
 - Clerk sign-in and sign-up
 - Protected dashboard route with a placeholder dashboard
+- Vitest unit and integration tests with V8 coverage thresholds
+- Playwright end-to-end tests across desktop and mobile browser engines
 - GitHub Pages deployment
 
 ### Professional V1 target
@@ -221,16 +223,53 @@ npm run preview
 
 ## Testing status
 
-Automated tests are mandatory for future functional changes and central to the Professional V1 quality requirements. The project does not yet have a configured test runner or `test` script.
+Automated testing is configured and mandatory for functional changes. The current foundation covers central Sudoku generation, reducer and hook behavior, component interactions, and the public game flow. Broader Professional V1 coverage will grow with each feature.
 
-The planned test strategy includes:
+The test stack uses:
 
-- unit tests for Sudoku domain logic, reducers, and utilities;
-- integration tests for meaningful component and system interactions;
-- end-to-end tests for critical game and authentication journeys; and
-- regression tests for every defect fix.
+- Vitest for unit and integration tests;
+- React Testing Library and `user-event` for user-facing component behavior;
+- jsdom for DOM-based component tests;
+- V8 coverage with strict thresholds for central game logic; and
+- Playwright for Chromium, Firefox, WebKit, Mobile Chrome, and Mobile Safari flows.
 
-Introducing the test stack requires a separately reviewed plan because it adds project dependencies and configuration.
+Run the deterministic test suite:
+
+```bash
+npm test
+```
+
+Run tests in watch mode:
+
+```bash
+npm run test:watch
+```
+
+Run tests with coverage thresholds:
+
+```bash
+npm run test:coverage
+```
+
+Install Playwright browser binaries once per development environment:
+
+```bash
+npx playwright install
+```
+
+Run end-to-end tests:
+
+```bash
+npm run test:e2e
+```
+
+Run coverage and end-to-end tests together:
+
+```bash
+npm run test:all
+```
+
+The end-to-end command builds and previews the production application locally. It requires the same Clerk publishable key as the application.
 
 ## Current deployment
 
@@ -254,7 +293,7 @@ Deployment-specific paths must remain separate from Sudoku domain behavior so th
 
 Before a functional task is complete, all relevant checks must pass:
 
-- automated tests once the test stack is configured;
+- automated unit, integration, and end-to-end tests;
 - TypeScript validation;
 - ESLint;
 - production build; and

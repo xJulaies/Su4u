@@ -28,6 +28,8 @@ export type TSudokuNotesProps = {
 export type TSudokuCellProps = {
   cell: TSudokuCell;
   isSelected: boolean;
+  isPeer: boolean;
+  isMatchingValue: boolean;
   rowIndex: number;
   colIndex: number;
 };
@@ -50,10 +52,12 @@ export type TSudokuNotesToggleProps = {
 
 export type TSudokuNumberBtnProps = {
   value: TSudokuValue;
+  isDisabled: boolean;
   onClick: (value: TSudokuValue) => void;
 };
 
 export type TSudokuNumberPadProps = {
+  completedValues: TSudokuValue[];
   onNumberClick: (value: TSudokuValue) => void;
 };
 

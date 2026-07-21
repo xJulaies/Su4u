@@ -96,7 +96,7 @@ Professional V1 does not include:
 | Theme support | Partial | Light and dark themes exist, but system-first selection and account synchronization are incomplete. |
 | Accessibility | Partial | Native controls and some dialog semantics exist. Complete keyboard gameplay, focus behavior, and product-level verification are missing. |
 | Responsive web UI | Partial | Responsive styling exists but has not been verified against all V1 layout requirements. |
-| Automated testing | Planned | Test data exists, but there is no configured automated test suite. |
+| Automated testing | Partial | Vitest unit and integration testing, V8 coverage thresholds, and Playwright browser testing are configured with an initial game-focused suite. Full product coverage remains ongoing. |
 | Backend resilience | Planned | No backend or synchronization layer exists. |
 
 ## Access model
@@ -214,6 +214,7 @@ Original given cells and player-solved cells are separate domain states.
 
 - Given cells are immutable.
 - A correct final entry becomes a solved, immutable player cell.
+- A correctly solved cell remains selected after entry so its peers and matching values stay visible.
 - A correct player entry must not be converted into an original given cell.
 - A solved player cell cannot be deleted, changed, or undone.
 - An incorrect final entry remains editable and visibly marked as an error.

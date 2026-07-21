@@ -21,10 +21,21 @@ jobs:
           node-version: 22
           cache: npm
 
-      - run: npm install
+      - run: npm ci
+
+      - run: npm run lint
+
+      - run: npm run test:coverage
 
       - run: npm run build
         env:
+          VITE_CLERK_PUBLISHABLE_KEY: ${{ secrets.VITE_CLERK_PUBLISHABLE_KEY }}
+
+      - run: npx playwright install --with-deps
+
+      - run: npm run test:e2e
+        env:
+          CI: "true"
           VITE_CLERK_PUBLISHABLE_KEY: ${{ secrets.VITE_CLERK_PUBLISHABLE_KEY }}
 
       - run: cp dist/index.html dist/404.html

@@ -12,6 +12,10 @@ dist
 dist-ssr
 *.local
 .tanstack
+coverage
+playwright-report
+test-results
+blob-report
 
 # Editor directories and files
 .vscode/*

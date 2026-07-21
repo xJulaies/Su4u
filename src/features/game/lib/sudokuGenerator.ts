@@ -9,6 +9,8 @@ const GRID_SIZE = 9;
 const BOX_SIZE = 3;
 const SUDOKU_VALUES: TSudokuValue[] = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
+type TRandom = () => number;
+
 function createEmptyGrid(): TSudokuGrid {
   return Array.from({ length: GRID_SIZE }, () =>
     Array.from({ length: GRID_SIZE }, () => null),
@@ -19,11 +21,14 @@ function cloneGrid(grid: TSudokuGrid): TSudokuGrid {
   return grid.map((row) => [...row]);
 }
 
-function shuffleValues(values: TSudokuValue[]): TSudokuValue[] {
+function shuffleValues(
+  values: TSudokuValue[],
+  random: TRandom,
+): TSudokuValue[] {
   const shuffledValues = [...values];
 
   for (let index = shuffledValues.length - 1; index > 0; index -= 1) {
-    const randomIndex = Math.floor(Math.random() * (index + 1));
+    const randomIndex = Math.floor(random() * (index + 1));
     [shuffledValues[index], shuffledValues[randomIndex]] = [
       shuffledValues[randomIndex],
       shuffledValues[index],
@@ -70,20 +75,20 @@ function findEmptyCell(grid: TSudokuGrid): [number, number] | null {
   return null;
 }
 
-function fillGrid(grid: TSudokuGrid): boolean {
+function fillGrid(grid: TSudokuGrid, random: TRandom): boolean {
   const emptyCell = findEmptyCell(grid);
 
   if (!emptyCell) return true;
 
   const [rowIndex, colIndex] = emptyCell;
-  const values = shuffleValues(SUDOKU_VALUES);
+  const values = shuffleValues(SUDOKU_VALUES, random);
 
   for (const value of values) {
     if (!isValidMove(grid, rowIndex, colIndex, value)) continue;
 
     grid[rowIndex][colIndex] = value;
 
-    if (fillGrid(grid)) return true;
+    if (fillGrid(grid, random)) return true;
 
     grid[rowIndex][colIndex] = null;
   }
@@ -91,9 +96,9 @@ function fillGrid(grid: TSudokuGrid): boolean {
   return false;
 }
 
-function generateSolvedGrid(): TSudokuGrid {
+function generateSolvedGrid(random: TRandom): TSudokuGrid {
   const grid = createEmptyGrid();
-  fillGrid(grid);
+  fillGrid(grid, random);
 
   return grid;
 }
@@ -119,7 +124,7 @@ function countSolutions(grid: TSudokuGrid, solutionLimit = 2): number {
   return solutionCount;
 }
 
-function createShuffledCellPositions(): [number, number][] {
+function createShuffledCellPositions(random: TRandom): [number, number][] {
   const positions: [number, number][] = [];
 
   for (let rowIndex = 0; rowIndex < GRID_SIZE; rowIndex += 1) {
@@ -128,15 +133,24 @@ function createShuffledCellPositions(): [number, number][] {
     }
   }
 
-  return positions.sort(() => Math.random() - 0.5);
+  for (let index = positions.length - 1; index > 0; index -= 1) {
+    const randomIndex = Math.floor(random() * (index + 1));
+    [positions[index], positions[randomIndex]] = [
+      positions[randomIndex],
+      positions[index],
+    ];
+  }
+
+  return positions;
 }
 
 function removeCellsFromGrid(
   grid: TSudokuGrid,
   cellsToRemove: number,
+  random: TRandom,
 ): TSudokuGrid {
   const puzzle = cloneGrid(grid);
-  const positions = createShuffledCellPositions();
+  const positions = createShuffledCellPositions(random);
   let removedCells = 0;
 
   for (const [rowIndex, colIndex] of positions) {
@@ -173,8 +187,11 @@ function convertGridToBoard(
   );
 }
 
-export function generateSudokuBoard(difficulty: TDifficulty): TSudokuBoard {
-  const solvedGrid = generateSolvedGrid();
+export function generateSudokuBoard(
+  difficulty: TDifficulty,
+  random: TRandom = Math.random,
+): TSudokuBoard {
+  const solvedGrid = generateSolvedGrid(random);
   let cellsToRemove = 45;
 
   switch (difficulty) {
@@ -188,7 +205,7 @@ export function generateSudokuBoard(difficulty: TDifficulty): TSudokuBoard {
       cellsToRemove = 55;
       break;
   }
-  const puzzleGrid = removeCellsFromGrid(solvedGrid, cellsToRemove);
+  const puzzleGrid = removeCellsFromGrid(solvedGrid, cellsToRemove, random);
 
   return convertGridToBoard(puzzleGrid, solvedGrid);
 }
